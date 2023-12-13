@@ -1,0 +1,63 @@
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+apply from: './dependencies.gradle'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+sourceCompatibility = '11'
+
+def dir = [
+	dist : "./dist",
+	dist_lib : "./dist/libs",
+	deploy : "./deploy"
+]
+
+dependencies {
+    implementation deps.apache.poi.base
+	implementation deps.apache.poi.ooxml
+
+	implementation deps.com.palmyra.client
+	implementation deps.org.slf4j.api
+    testImplementation 'junit:junit:4.12'
+
+
+	compileOnly deps.org.lombok
+	annotationProcessor deps.org.lombok
+}
+
+task copyDeps(type: Copy) {
+   from configurations.runtimeClasspath
+   into "${dir.dist_lib}"
+}
+
+task cleanDeployFolder(type:Delete){	
+	delete "$dir.deploy"	
+}
+
+task deployConfig(type:Copy){
+	into("${dir.deploy}")
+   	into("resources"){
+   		from "$projectDir/src/main/resources/application.properties"
+   	}
+}
+
+
+task deployEnv(type:Copy, dependsOn:[cleanDeployFolder, deployConfig]){
+	into("${dir.deploy}")		
+   	into ("libs"){
+   		from configurations.runtimeClasspath
+   		from jar
+   	}
+}
+
+task deploy (type: Copy){
+    from jar
+    into "${dir.deploy}/libs"
+}

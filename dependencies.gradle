@@ -1,0 +1,26 @@
+def versions = [ 
+	jackson:'2.16.0', poi:'5.2.5', palmyraclient:'0.2.0', slf4j:'2.0.9']
+
+def jackson = [
+	annotations: "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}",
+	core: "com.fasterxml.jackson.core:jackson-core:${versions.jackson}",
+	databind: "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}"
+]
+
+def apache = [	
+	poi:[base :"org.apache.poi:poi:${versions.poi}",
+		ooxml:"org.apache.poi:poi-ooxml:${versions.poi}"]
+]
+
+def org = [
+	lombok : "org.projectlombok:lombok:1.18.30",
+	slf4j: [ api:"org.slf4j:slf4j-api:${versions.slf4j}",
+		reload4j:"org.slf4j:slf4j-reload4j:${versions.slf4j}"
+  ]
+]
+
+def com = [
+	palmyra : [client : "com.palmyralabs.palmyra:palmyra-java-client:${versions.palmyraclient}"]
+]
+
+ext.deps = [ 'jackson': jackson, 'apache': apache, 'org':org, 'com':com]
