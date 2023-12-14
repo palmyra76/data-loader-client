@@ -10,6 +10,8 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+version = '0.2.0'
+group = 'com.palmyralabs.palmyra'
 
 sourceCompatibility = '11'
 
@@ -25,8 +27,7 @@ dependencies {
 	implementation deps.apache.log4j.core
 	implementation deps.apache.log4j.slf4j2
 
-	implementation deps.com.palmyra.client
-	//implementation deps.org.slf4j.api
+	api deps.com.palmyra.client
     testImplementation 'junit:junit:4.12'
 
 
@@ -62,4 +63,22 @@ task deployEnv(type:Copy, dependsOn:[cleanDeployFolder, deployConfig]){
 task deploy (type: Copy){
     from jar
     into "${dir.deploy}/libs"
+}
+
+java {
+    withSourcesJar()
+}
+	
+	
+publishing {
+  publications {
+    maven(MavenPublication) {
+      from components.java
+    }
+  }
+}
+  
+task sourceJar(type: Jar) {
+	archiveClassifier = "sources"
+	from sourceSets.main.allJava
 }

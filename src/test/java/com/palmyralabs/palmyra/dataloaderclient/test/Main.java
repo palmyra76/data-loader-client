@@ -23,5 +23,4 @@ public class Main {
 		ExcelDataReader dataReader = new ExcelDataReader(dataMapping, "example");
 		loader.loadData(dataReader.readSheet(new File(sourceFile), 1, 1));
 	}
-
 }
