@@ -12,21 +12,24 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
-public class Loader {	
+public class Loader {
 	private final TupleRestClient tupleClient;
 	private int loadedRecords = 0;
 	private int errorRecords = 0;
 
-	public Loader(TupleRestClient tupleClient) {		
+	public Loader(TupleRestClient tupleClient) {
 		this.tupleClient = tupleClient;
 	}
 
 	@SneakyThrows
 	public synchronized void loadData(DataReader reader) {
 		for (Tuple data : reader) {
+			if (0 == data.getAttributes().size()) {
+				System.out.println("empty tuple");
+			}
 			try {
 				tupleClient.save(data);
-				loadedRecords++;
+			loadedRecords++;
 			} catch (IOException e) {
 				log.error("Error while loading data from source - " + reader.getName(), e);
 				errorRecords++;

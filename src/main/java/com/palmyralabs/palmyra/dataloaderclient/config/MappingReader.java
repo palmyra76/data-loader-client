@@ -13,6 +13,9 @@ public class MappingReader {
 
 	public DataloadMapping getMapping(String fileName) {
 		InputStream inStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
+		if (null == inStream) {
+			throw new RuntimeException("file " + fileName + " is not available in classpath");
+		}
 		return getMapping(inStream);
 	}
 
@@ -36,7 +39,7 @@ public class MappingReader {
 
 	private FieldMapping createMapping(String key, String value) {
 		int v = Integer.parseInt(value);
-		int idx = key.indexOf(':');
+		int idx = key.indexOf('-');
 		int i = key.indexOf(';');
 		if (idx < i) {
 			log.error("Invalid key {}", key);
@@ -46,10 +49,10 @@ public class MappingReader {
 			String name = key.substring(0, idx);
 			if (i > 0) {
 				String dataType = key.substring(idx, i);
-				String pattern = key.substring(i);
+				String pattern = key.substring(i + 1);
 				return new FieldMapping(name, v, DataType.of(dataType), pattern);
 			} else {
-				String dataType = key.substring(idx);
+				String dataType = key.substring(idx + 1);
 				return new FieldMapping(name, v, DataType.of(dataType), null);
 			}
 
