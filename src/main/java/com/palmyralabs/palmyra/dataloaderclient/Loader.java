@@ -34,7 +34,7 @@ public class Loader {
                 tupleClient.save(data);
                 loadedRecords++;
             } catch (IOException e) {
-            	errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, "loadError", e));                
+            	errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, e.getMessage(), e));                
             }
         }
         errorWriter.close();
