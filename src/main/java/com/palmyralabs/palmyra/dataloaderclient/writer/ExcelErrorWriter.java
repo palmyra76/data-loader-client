@@ -10,9 +10,39 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.palmyralabs.palmyra.client.Tuple;
 import com.palmyralabs.palmyra.dataloaderclient.model.ErrorMessage;
 
-public class ExcelErrorWriter {
+public class ExcelErrorWriter implements ErrorWriter{
+	
+
+	/**
+	 * Write one row per error received
+	 */
+	@Override
+	public void accept(ErrorMessage<Tuple> errorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Close the excel sheet / file here
+	 */
+	@Override
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * DO the excel sheet open / other things here
+	 */
+	@Override
+	public void initialize() {
+		// TODO Auto-generated method stub
+		
+	}
+	
     public static void writeErrors(List<? extends ExcelErrorMessage<?>> errorMessages, String outputFilePath) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Error Log");
