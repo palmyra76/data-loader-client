@@ -1,8 +1,7 @@
 package com.palmyralabs.palmyra.dataloaderclient;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import com.palmyralabs.palmyra.client.Tuple;
 import com.palmyralabs.palmyra.client.TupleRestClient;
