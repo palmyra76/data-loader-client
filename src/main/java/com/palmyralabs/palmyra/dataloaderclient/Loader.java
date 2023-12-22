@@ -9,7 +9,6 @@ import com.palmyralabs.palmyra.client.TupleRestClient;
 import com.palmyralabs.palmyra.dataloaderclient.model.ErrorMessage;
 import com.palmyralabs.palmyra.dataloaderclient.reader.DataReader;
 import com.palmyralabs.palmyra.dataloaderclient.writer.ErrorWriter;
-import com.palmyralabs.palmyra.dataloaderclient.writer.ExcelErrorMessage;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -19,7 +18,6 @@ public class Loader {
     private final TupleRestClient tupleClient;
     private int loadedRecords = 0;
     private int errorRecords = 0;
-    private List<ExcelErrorMessage<?>> errorMessages = new ArrayList<>();
 
     public Loader(TupleRestClient tupleClient) {
         this.tupleClient = tupleClient;
@@ -44,12 +42,5 @@ public class Loader {
         reader.close();
     }
 
-//    private void handleLoadError(DataReader reader, Tuple data, IOException e) {
-//        errorRecords++;
-//
-//
-//        String errorMessage = "Error while loading data from source - " + reader.getName() + ": " + e.getMessage();
-//        ExcelErrorMessage<String> excelErrorMessage = new ExcelErrorMessage<>(errorMessage, "ExampleErrorType");
-//        errorMessages.add(excelErrorMessage);
-//    }
+
 }
