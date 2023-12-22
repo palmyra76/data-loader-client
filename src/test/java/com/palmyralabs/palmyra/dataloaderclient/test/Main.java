@@ -31,7 +31,7 @@ public class Main {
 	    int sheetIndex = 0;
 
 	    
-	    ExcelErrorWriter errorWriter = new ExcelErrorWriter();
+	    ExcelErrorWriter errorWriter = new ExcelErrorWriter(dataMapping);
 	    errorWriter.initialize(); 
 
 	    loader.loadData(dataReader.readSheet(new File(sourceFile), sheetIndex, 1), errorWriter);

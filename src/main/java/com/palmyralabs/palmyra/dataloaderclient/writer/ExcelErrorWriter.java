@@ -3,7 +3,9 @@ package com.palmyralabs.palmyra.dataloaderclient.writer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -12,55 +14,77 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.palmyralabs.palmyra.client.Tuple;
+import com.palmyralabs.palmyra.dataloaderclient.config.DataloadMapping;
+import com.palmyralabs.palmyra.dataloaderclient.config.FieldMapping;
 import com.palmyralabs.palmyra.dataloaderclient.model.ErrorMessage;
 
 public class ExcelErrorWriter implements ErrorWriter {
 
-    private Workbook workbook;
-    private Sheet sheet;
+    private final DataloadMapping dataMapping;
+    private final Workbook workbook;
+    private final Sheet sheet;
     private int rowNum;
 
-    public void initialize() {
-        workbook = new XSSFWorkbook();
-        sheet = workbook.createSheet("Error Log");
-
-        Row headerRow = sheet.createRow(0);
-
-        Cell headerCell1 = headerRow.createCell(0);
-        headerCell1.setCellValue("Error Data");
-        Cell headerCell2 = headerRow.createCell(2);
-        headerCell2.setCellValue("Line Number");
-        Cell headerCell3 = headerRow.createCell(1);
-        headerCell3.setCellValue("Error Message");
-
-        rowNum = 1;
+    public ExcelErrorWriter(DataloadMapping dataMapping) {
+        this.dataMapping = dataMapping;
+        this.workbook = new XSSFWorkbook();
+        this.sheet = workbook.createSheet("Error Log");
+        this.rowNum = 1; 
     }
 
+    @Override
+    public void initialize() {
+        Row headerRow = sheet.createRow(0);
+
+        Cell headerCell1 = headerRow.createCell(1);
+        headerCell1.setCellValue("Error Data");
+        Cell headerCell2 = headerRow.createCell(0);
+        headerCell2.setCellValue("Line Number");
+        Cell headerCell3 = headerRow.createCell(2);
+        headerCell3.setCellValue("Error Message");
+        
+    }
+
+    @Override
     public void accept(ErrorMessage<Tuple> errorMessage) {
         Row row = sheet.createRow(rowNum);
         Tuple errorData = errorMessage.getErrorData();
 
-        int cellIndex = 0;
+        
 
-        for (Map.Entry<String, Object> entry : errorData.getAttributes().entrySet()) {
+        Cell rowNumberCell = row.createCell(0);
+        rowNumberCell.setCellValue(sheet.getLastRowNum() + 1);
+
+        int cellIndex = 1;
+        
+        for (FieldMapping mapping : dataMapping.getFieldMapping()) {
+            String key = mapping.getName();
             Cell cell = row.createCell(cellIndex);
-            cell.setCellValue(entry.getValue() != null ? entry.getValue().toString() : "");
+
+            Object value = errorData.getAttributes().get(key);
+
+            if (value instanceof Date) {
+               
+                cell.setCellValue(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) value));
+            } else {
+                
+                cell.setCellValue(value != null ? value.toString() : "");
+            }
+
             cellIndex++;
         }
-        
-        Cell rowNumberCell = row.createCell(cellIndex + 1);
-        rowNumberCell.setCellValue(sheet.getLastRowNum() + 1);
+
+
         
         Cell errorTypeCell = row.createCell(cellIndex);
-        errorTypeCell.setCellValue(errorMessage.getErrorType());
+        errorTypeCell.setCellValue(errorMessage.getT().getMessage());
 
         rowNum++;
     }
 
-
     @Override
     public void close() throws IOException {
-    	String outputFilePath = System.getProperty("user.home") + File.separator + "errorlog.xlsx";
+        String outputFilePath = System.getProperty("user.home") + File.separator + "errorlog.xlsx";
         for (int i = 0; i < 3; i++) {
             sheet.autoSizeColumn(i);
         }
@@ -79,5 +103,4 @@ public class ExcelErrorWriter implements ErrorWriter {
 
         System.out.println("Error messages written to: " + outputFilePath);
     }
-
 }

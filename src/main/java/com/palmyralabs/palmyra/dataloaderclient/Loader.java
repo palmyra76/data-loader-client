@@ -2,7 +2,6 @@ package com.palmyralabs.palmyra.dataloaderclient;
 
 import java.io.IOException;
 
-
 import com.palmyralabs.palmyra.client.Tuple;
 import com.palmyralabs.palmyra.client.TupleRestClient;
 import com.palmyralabs.palmyra.dataloaderclient.model.ErrorMessage;
@@ -11,7 +10,8 @@ import com.palmyralabs.palmyra.dataloaderclient.writer.ErrorWriter;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Getter
 public class Loader {
     private final TupleRestClient tupleClient;
@@ -28,13 +28,13 @@ public class Loader {
     	
         for (Tuple data : reader) {
             if (0 == data.getAttributes().size()) {
-                System.out.println("empty tuple");
+                log.error("Empty class");
             }
             try {
                 tupleClient.save(data);
                 loadedRecords++;
             } catch (IOException e) {
-            	errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, e.getMessage(), e));                
+            	errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, "loadError", e));                
             }
         }
         errorWriter.close();
