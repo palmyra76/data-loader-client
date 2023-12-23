@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Date;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -100,7 +99,5 @@ public class ExcelErrorWriter implements ErrorWriter {
                 e.printStackTrace();
             }
         }
-
-        System.out.println("Error messages written to: " + outputFilePath);
     }
 }
