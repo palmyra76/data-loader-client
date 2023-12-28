@@ -1,10 +1,9 @@
 package com.palmyralabs.palmyra.dataloaderclient.writer;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Date;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,24 +23,32 @@ public class ExcelErrorWriter implements ErrorWriter {
     private final Workbook workbook;
     private final Sheet sheet;
     private int rowNum;
+    private final String existingFilePath;
 
-    public ExcelErrorWriter(DataloadMapping dataMapping) {
+    public ExcelErrorWriter(DataloadMapping dataMapping, String existingFilePath) {
         this.dataMapping = dataMapping;
-        this.workbook = new XSSFWorkbook();
-        this.sheet = workbook.createSheet("Error Log");
-        this.rowNum = 1; 
+        this.rowNum = 1;
+        this.existingFilePath = existingFilePath;
+
+        this.workbook = readWorkbook(existingFilePath);
+        this.sheet = workbook.getSheet("Error Log");
+
+        initialize();
     }
 
-    @Override
-    public void initialize() {
-        Row headerRow = sheet.createRow(0);
+    private Workbook readWorkbook(String filePath) {
+        try (FileInputStream fileInputStream = new FileInputStream(filePath)) {
+            return new XSSFWorkbook(fileInputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error reading existing workbook: " + e.getMessage());
+        }
+    }
 
-        Cell headerCell1 = headerRow.createCell(1);
-        headerCell1.setCellValue("Error Data");
-        Cell headerCell2 = headerRow.createCell(0);
-        headerCell2.setCellValue("Line Number");
-        Cell headerCell3 = headerRow.createCell(2);
-        headerCell3.setCellValue("Error Message");
+    public void initialize() {
+        if (sheet == null || sheet.getLastRowNum() == 0) {
+            throw new RuntimeException("Error: Unable to find 'Error Log' sheet or sheet is empty.");
+        }
         
     }
 
@@ -50,13 +57,11 @@ public class ExcelErrorWriter implements ErrorWriter {
         Row row = sheet.createRow(rowNum);
         Tuple errorData = errorMessage.getErrorData();
 
-        
-
         Cell rowNumberCell = row.createCell(0);
         rowNumberCell.setCellValue(sheet.getLastRowNum() + 1);
 
         int cellIndex = 1;
-        
+
         for (FieldMapping mapping : dataMapping.getFieldMapping()) {
             String key = mapping.getName();
             Cell cell = row.createCell(cellIndex);
@@ -64,43 +69,34 @@ public class ExcelErrorWriter implements ErrorWriter {
             Object value = errorData.getAttributes().get(key);
 
             if (value instanceof Date) {
-               
                 cell.setCellValue(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) value));
             } else {
-                
                 cell.setCellValue(value != null ? value.toString() : "");
             }
 
             cellIndex++;
         }
 
-
-        
         Cell errorTypeCell = row.createCell(cellIndex);
         errorTypeCell.setCellValue(errorMessage.getT().getMessage());
 
         rowNum++;
+        writeWorkbookToFile();
+    }
+
+    private void writeWorkbookToFile() {
+        try (FileOutputStream fileOut = new FileOutputStream(existingFilePath)) {
+            workbook.write(fileOut);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error writing to existing workbook: " + e.getMessage());
+        }
     }
 
     @Override
     public void close() throws IOException {
-        String outputFilePath = System.getProperty("user.home") + File.separator + "errorlog.xlsx";
-        for (int i = 0; i < 3; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        try (FileOutputStream fileOut = new FileOutputStream(outputFilePath)) {
-            workbook.write(fileOut);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                workbook.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        System.out.println("Error messages written to: " + outputFilePath);
+        System.out.println("Error messages written to: " + existingFilePath);
     }
+
+	
 }

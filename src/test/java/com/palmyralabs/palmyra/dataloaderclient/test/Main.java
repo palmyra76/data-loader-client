@@ -20,7 +20,7 @@ public class Main {
 	    TupleRestClient tupleClient = PalmyraClientFactory.getClient("http://localhost:6060", "example");
 	    Loader loader = new Loader(tupleClient);
 	    MappingReader mappingReader = new MappingReader(); 
-	    loadData(loader, mappingReader, "example.properties", "C:\\Users\\Aravindhan\\OneDrive\\Desktop\\dataload.xlsx");
+	    loadData(loader, mappingReader, "example.properties", System.getProperty("user.home")+ File.separator + "OneDrive"+ File.separator +"Desktop" + File.separator + "dataload.xlsx");
 	}
 
 	@SneakyThrows
@@ -30,8 +30,7 @@ public class Main {
 
 	    int sheetIndex = 0;
 
-	    
-	    ExcelErrorWriter errorWriter = new ExcelErrorWriter(dataMapping);
+	    ExcelErrorWriter errorWriter = new ExcelErrorWriter(dataMapping, "C:\\Users\\Aravindhan\\errorlog.xlsx");
 	    errorWriter.initialize(); 
 
 	    loader.loadData(dataReader.readSheet(new File(sourceFile), sheetIndex, 1), errorWriter);

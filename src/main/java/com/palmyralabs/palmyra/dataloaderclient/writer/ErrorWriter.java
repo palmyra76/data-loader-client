@@ -8,4 +8,5 @@ import com.palmyralabs.palmyra.dataloaderclient.model.ErrorMessage;
 
 public interface ErrorWriter extends Consumer<ErrorMessage<Tuple>>, Closeable{
 	void initialize();
+
 }
