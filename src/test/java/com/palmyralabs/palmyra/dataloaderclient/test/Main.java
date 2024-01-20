@@ -8,6 +8,7 @@ import com.palmyralabs.palmyra.dataloaderclient.PalmyraClientFactory;
 import com.palmyralabs.palmyra.dataloaderclient.config.DataloadMapping;
 import com.palmyralabs.palmyra.dataloaderclient.config.MappingReader;
 import com.palmyralabs.palmyra.dataloaderclient.reader.ExcelDataReader;
+import com.palmyralabs.palmyra.dataloaderclient.reader.MappingDataValidator;
 import com.palmyralabs.palmyra.dataloaderclient.writer.ErrorWriter;
 import com.palmyralabs.palmyra.dataloaderclient.writer.ExcelErrorWriter;
 
@@ -34,7 +35,9 @@ public class Main {
 	    ExcelErrorWriter errorWriter = new ExcelErrorWriter(dataMapping);
 	    errorWriter.initialize(); 
 
-	    loader.loadData(dataReader.readSheet(new File(sourceFile), sheetIndex, 1), errorWriter);
+	    loader.loadData(dataReader.readSheet(new File(sourceFile), sheetIndex, 1),
+	    		new MappingDataValidator(dataMapping),
+	    		errorWriter);
 	}
 
 }

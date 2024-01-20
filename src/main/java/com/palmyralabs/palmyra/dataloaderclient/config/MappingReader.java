@@ -31,7 +31,9 @@ public class MappingReader {
 
 		for (String key : props.stringPropertyNames()) {
 			String value = props.getProperty(key);
-			FieldMapping mapping = createMapping(key, value);
+			String field = key.startsWith("^") ? key.substring(1) : key;			
+			FieldMapping mapping = createMapping(field, value);
+			mapping.setMandatory(key.startsWith("^"));
 			result.addMapping(mapping);
 		}
 		return result;

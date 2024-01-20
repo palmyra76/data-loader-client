@@ -7,6 +7,7 @@ import com.palmyralabs.palmyra.client.TupleRestClient;
 import com.palmyralabs.palmyra.dataloaderclient.model.ErrorMessage;
 import com.palmyralabs.palmyra.dataloaderclient.reader.DataPreProcessor;
 import com.palmyralabs.palmyra.dataloaderclient.reader.DataReader;
+import com.palmyralabs.palmyra.dataloaderclient.reader.DataValidator;
 import com.palmyralabs.palmyra.dataloaderclient.writer.ErrorWriter;
 
 import lombok.Getter;
@@ -32,11 +33,12 @@ public class Loader {
 	}
 
 	@SneakyThrows
-	public synchronized void loadData(DataReader reader, ErrorWriter errorWriter) {
+	public synchronized void loadData(DataReader reader, DataValidator validator, ErrorWriter errorWriter) {
 		int rowNumber = 0;
 		int emptyRecords = 0;
 
 		for (Tuple data : reader) {
+			rowNumber++;
 			if (0 == data.getAttributes().size()) {
 				if (emptyRecords > 5)
 					break;
@@ -47,15 +49,20 @@ public class Loader {
 				emptyRecords = 1;
 			}
 			try {
+				validator.checkValid(data);
 				tupleClient.save(preProcessor.preProcess(data));
 				loadedRecords++;
 			} catch (IOException e) {
 				errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, "loadError", e));
+			} catch (Throwable t) {
+				errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, "loadError", t));
 			}
 		}
 		log.info("loaded {} records from {}", loadedRecords, reader.getName());
 		errorWriter.close();
 		reader.close();
 	}
+	
+	
 
 }

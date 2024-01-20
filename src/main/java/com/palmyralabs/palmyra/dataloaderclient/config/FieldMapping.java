@@ -13,6 +13,7 @@ import com.palmyralabs.palmyra.dataloaderclient.converter.NoopFieldConverter;
 import com.palmyralabs.palmyra.dataloaderclient.converter.StringFieldConverter;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class FieldMapping {
@@ -21,7 +22,8 @@ public class FieldMapping {
 
 	private DataType dataType;
 	private String format;
-
+	@Setter
+	private boolean isMandatory;
 	private FieldConverter converter;
 
 	public FieldMapping(String key, int column, DataType dataType, String pattern) {

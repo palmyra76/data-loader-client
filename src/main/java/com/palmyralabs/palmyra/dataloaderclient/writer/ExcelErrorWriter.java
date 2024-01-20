@@ -60,7 +60,7 @@ public class ExcelErrorWriter implements ErrorWriter {
             String key = mapping.getName();
             Cell cell = row.createCell(cellIndex);
 
-            Object value = errorData.getAttributes().get(key);
+            Object value = errorData.getRefAttribute(key);
 
             if (value instanceof Date) {
                
