@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import com.palmyralabs.palmyra.client.Tuple;
 import com.palmyralabs.palmyra.client.TupleRestClient;
+import com.palmyralabs.palmyra.client.exception.ForbiddenException;
+import com.palmyralabs.palmyra.client.exception.UnAuthorizedException;
 import com.palmyralabs.palmyra.dataloaderclient.model.ErrorMessage;
 import com.palmyralabs.palmyra.dataloaderclient.reader.DataPreProcessor;
 import com.palmyralabs.palmyra.dataloaderclient.reader.DataReader;
@@ -52,6 +54,8 @@ public class Loader {
 				validator.checkValid(data);
 				tupleClient.save(preProcessor.preProcess(data));
 				loadedRecords++;
+			} catch (UnAuthorizedException | ForbiddenException uae) {
+				errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, "unAuthorized", uae));
 			} catch (IOException e) {
 				errorWriter.accept(new ErrorMessage<Tuple>(rowNumber, data, "loadError", e));
 			} catch (Throwable t) {
@@ -62,7 +66,5 @@ public class Loader {
 		errorWriter.close();
 		reader.close();
 	}
-	
-	
 
 }

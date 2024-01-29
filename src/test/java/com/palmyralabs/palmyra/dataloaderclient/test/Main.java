@@ -10,7 +10,6 @@ import com.palmyralabs.palmyra.dataloaderclient.config.DataloadMapping;
 import com.palmyralabs.palmyra.dataloaderclient.config.MappingReader;
 import com.palmyralabs.palmyra.dataloaderclient.reader.ExcelDataReader;
 import com.palmyralabs.palmyra.dataloaderclient.reader.MappingDataValidator;
-import com.palmyralabs.palmyra.dataloaderclient.writer.ErrorWriter;
 import com.palmyralabs.palmyra.dataloaderclient.writer.ExcelErrorWriter;
 
 import lombok.SneakyThrows;
@@ -31,7 +30,6 @@ public class Main {
 	    ExcelDataReader dataReader = new ExcelDataReader(dataMapping, "example");
 
 	    int sheetIndex = 0;
-
 	    
 	    ExcelErrorWriter errorWriter = new ExcelErrorWriter(dataMapping, Paths.get("C:\\Users\\Aravindhan\\OneDrive\\Desktop\\error.xlsx"));
 	    errorWriter.initialize(); 

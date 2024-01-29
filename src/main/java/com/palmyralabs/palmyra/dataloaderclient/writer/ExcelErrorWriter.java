@@ -78,7 +78,7 @@ public class ExcelErrorWriter implements ErrorWriter {
 
         
         Cell errorTypeCell = row.createCell(cellIndex);
-        errorTypeCell.setCellValue(errorMessage.getT().getMessage());
+        errorTypeCell.setCellValue(errorMessage.getError().getMessage());
 
         rowNum++;
     }

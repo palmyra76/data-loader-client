@@ -11,5 +11,5 @@ public class ErrorMessage<T> {
 	private final int rowNumber;
 	private final T errorData;
     private final String errorType;
-    private final Throwable t;    
+    private final Throwable error;    
 }
