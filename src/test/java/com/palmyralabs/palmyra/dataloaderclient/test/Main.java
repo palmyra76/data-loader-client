@@ -1,6 +1,7 @@
 package com.palmyralabs.palmyra.dataloaderclient.test;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import com.palmyralabs.palmyra.client.TupleRestClient;
 import com.palmyralabs.palmyra.dataloaderclient.Loader;
@@ -32,7 +33,7 @@ public class Main {
 	    int sheetIndex = 0;
 
 	    
-	    ExcelErrorWriter errorWriter = new ExcelErrorWriter(dataMapping);
+	    ExcelErrorWriter errorWriter = new ExcelErrorWriter(dataMapping, Paths.get("C:\\Users\\Aravindhan\\OneDrive\\Desktop\\error.xlsx"));
 	    errorWriter.initialize(); 
 
 	    loader.loadData(dataReader.readSheet(new File(sourceFile), sheetIndex, 1),

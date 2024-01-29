@@ -1,8 +1,8 @@
 package com.palmyralabs.palmyra.dataloaderclient.writer;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
@@ -22,12 +22,14 @@ public class ExcelErrorWriter implements ErrorWriter {
     private final DataloadMapping dataMapping;
     private final Workbook workbook;
     private final Sheet sheet;
+    private final Path errorFilePath;
     private int rowNum;
 
-    public ExcelErrorWriter(DataloadMapping dataMapping) {
+    public ExcelErrorWriter(DataloadMapping dataMapping, Path errorFilePath) {
         this.dataMapping = dataMapping;
         this.workbook = new XSSFWorkbook();
         this.sheet = workbook.createSheet("Error Log");
+        this.errorFilePath = errorFilePath;
         this.rowNum = 1; 
     }
 
@@ -83,12 +85,12 @@ public class ExcelErrorWriter implements ErrorWriter {
 
     @Override
     public void close() throws IOException {
-        String outputFilePath = System.getProperty("user.home") + File.separator + "errorlog.xlsx";
+
         for (int i = 0; i < 3; i++) {
             sheet.autoSizeColumn(i);
         }
 
-        try (FileOutputStream fileOut = new FileOutputStream(outputFilePath)) {
+        try (FileOutputStream fileOut = new FileOutputStream(errorFilePath.toFile())) {
             workbook.write(fileOut);
         } catch (IOException e) {
             e.printStackTrace();
