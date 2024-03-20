@@ -10,7 +10,7 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
-version = '0.2.0'
+version = '0.2.1'
 group = 'com.palmyralabs.palmyra'
 
 sourceCompatibility = '11'
@@ -33,6 +33,9 @@ dependencies {
 
 	compileOnly deps.org.lombok
 	annotationProcessor deps.org.lombok
+	
+	testCompileOnly deps.org.lombok
+	testAnnotationProcessor deps.org.lombok
 }
 
 task copyDeps(type: Copy) {
