@@ -40,6 +40,10 @@ public class ExcelDataReader {
 	private int startRow = 1;
 
 	private final DataFormatter formatter = new DataFormatter();
+	
+	{
+		formatter.setUseCachedValuesForFormulaCells(true);
+	}
 
 	private Tuple readRow(Row row) {
 
@@ -67,6 +71,8 @@ public class ExcelDataReader {
 			}
 		case BLANK:
 			return null;
+		case FORMULA:
+			return formatter.formatCellValue(cell).trim();
 		default:
 			return formatter.formatCellValue(cell).trim();
 		}
