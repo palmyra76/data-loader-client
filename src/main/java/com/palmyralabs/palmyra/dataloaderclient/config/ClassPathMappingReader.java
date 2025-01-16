@@ -3,15 +3,30 @@ package com.palmyralabs.palmyra.dataloaderclient.config;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.palmyralabs.palmyra.dataloaderclient.MappingReader;
 import com.palmyralabs.palmyra.dataloaderclient.exception.InvalidMappingException;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MappingReader {
+public class ClassPathMappingReader implements MappingReader{
+	
+	private final String baseFolder;
+	private final String extension;
 
-	public DataloadMapping getMapping(String fileName) {
+	public ClassPathMappingReader(String baseFolder) {
+		this(baseFolder, "properties");
+	}
+	
+	public ClassPathMappingReader(String baseFolder, String extension) {
+		String slash = baseFolder.endsWith("/") ? "" : "/";				
+		this.baseFolder = baseFolder + slash;
+		this.extension = extension;
+	}
+
+	public DataloadMapping getMapping(String reference) {
+		String fileName = baseFolder + reference + "." + extension;
 		InputStream inStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
 		if (null == inStream) {
 			throw new RuntimeException("file " + fileName + " is not available in classpath");

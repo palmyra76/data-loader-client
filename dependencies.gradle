@@ -1,5 +1,5 @@
 def versions = [ log4j:'2.22.0',
-	jackson:'2.16.0', poi:'5.2.5', palmyraclient:'0.2.1', slf4j:'2.0.9']
+	jackson:'2.16.0', poi:'5.2.5', palmyraclient:'0.3.0', slf4j:'2.0.9']
 
 def jackson = [
 	annotations: "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}",
