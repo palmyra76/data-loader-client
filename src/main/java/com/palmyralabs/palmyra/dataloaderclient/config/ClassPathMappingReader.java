@@ -58,16 +58,16 @@ public class ClassPathMappingReader implements MappingReader{
 		int v = Integer.parseInt(value);
 		int idx = key.indexOf('-');
 		int i = key.indexOf(';');
-		if (idx < i) {
-			log.error("Invalid key {}", key);
-			throw new InvalidMappingException(key, "Invalid key");
-		}
+		
 		if (idx > 0) {
 			String name = key.substring(0, idx);
 			if (i > 0) {
-				String dataType = key.substring(idx, i);
-				String pattern = key.substring(i + 1);
-				return new FieldMapping(name, v, DataType.of(dataType), pattern);
+				if (idx < i) {
+					String dataType = key.substring(idx + 1, i);
+					String pattern = key.substring(i + 1);
+					return new FieldMapping(name, v, DataType.of(dataType), pattern);
+				} else
+					throw new RuntimeException("invalid mapping " + key);
 			} else {
 				String dataType = key.substring(idx + 1);
 				return new FieldMapping(name, v, DataType.of(dataType), null);

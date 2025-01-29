@@ -10,7 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SimpleMappingReader implements MappingReader{
+public class SimpleMappingReader implements MappingReader {
 
 	public DataloadMapping getMapping(String fileName) {
 		InputStream inStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
@@ -32,7 +32,7 @@ public class SimpleMappingReader implements MappingReader{
 
 		for (String key : props.stringPropertyNames()) {
 			String value = props.getProperty(key);
-			String field = key.startsWith("^") ? key.substring(1) : key;			
+			String field = key.startsWith("^") ? key.substring(1) : key;
 			FieldMapping mapping = createMapping(field, value);
 			mapping.setMandatory(key.startsWith("^"));
 			result.addMapping(mapping);
@@ -44,16 +44,16 @@ public class SimpleMappingReader implements MappingReader{
 		int v = Integer.parseInt(value);
 		int idx = key.indexOf('-');
 		int i = key.indexOf(';');
-		if (idx < i) {
-			log.error("Invalid key {}", key);
-			throw new InvalidMappingException(key, "Invalid key");
-		}
+
 		if (idx > 0) {
 			String name = key.substring(0, idx);
 			if (i > 0) {
-				String dataType = key.substring(idx, i);
-				String pattern = key.substring(i + 1);
-				return new FieldMapping(name, v, DataType.of(dataType), pattern);
+				if (idx < i) {
+					String dataType = key.substring(idx + 1, i);
+					String pattern = key.substring(i + 1);
+					return new FieldMapping(name, v, DataType.of(dataType), pattern);
+				} else
+					throw new RuntimeException("invalid mapping " + key);
 			} else {
 				String dataType = key.substring(idx + 1);
 				return new FieldMapping(name, v, DataType.of(dataType), null);
