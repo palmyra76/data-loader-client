@@ -1,5 +1,5 @@
-def versions = [ log4j:'2.22.0',
-	jackson:'2.16.0', poi:'5.2.5', palmyraclient:'0.4.1', slf4j:'2.0.9']
+def versions = [ log4j:'2.25.3', lombok:'1.18.42',
+	jackson:'2.19.4', poi:'5.5.1', palmyraclient:'0.4.2', slf4j:'2.0.17']
 
 def jackson = [
 	annotations: "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}",
@@ -16,7 +16,7 @@ def apache = [
 ]
 
 def org = [
-	lombok : "org.projectlombok:lombok:1.18.30",
+	lombok : "org.projectlombok:lombok:${versions.lombok}",
 	slf4j: [ api:"org.slf4j:slf4j-api:${versions.slf4j}",
 		reload4j:"org.slf4j:slf4j-reload4j:${versions.slf4j}"
 	]

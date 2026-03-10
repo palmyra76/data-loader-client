@@ -10,10 +10,8 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
-version = '0.4.1'
+version = '0.4.2'
 group = 'com.palmyralabs.palmyra'
-
-sourceCompatibility = '11'
 
 def dir = [
 	dist : "./dist",
@@ -69,6 +67,8 @@ task deploy (type: Copy){
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
 }
 	
@@ -84,4 +84,8 @@ publishing {
 task sourceJar(type: Jar) {
 	archiveClassifier = "sources"
 	from sourceSets.main.allJava
+}
+
+tasks.withType(Test) {
+    failOnNoDiscoveredTests = false
 }
